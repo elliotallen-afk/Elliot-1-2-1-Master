@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OVO 1-2-1 Check-In</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gd:#0D3D2B;--gm:#1A6B47;--gb:#2ECC71;--gl:#D6F5E6;--gp:#EEF9F3;
+  --ink:#0D1F17;--inm:#3D5446;--inl:#7A9488;
+  --bdr:#DDE9E3;--off:#F5F5F2;--wht:#FFFFFF;--r:10px;--rl:16px;--amber:#f59e0b;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',-apple-system,BlinkMacSystemFont,sans-serif;background:var(--off);color:var(--ink);font-size:14px;min-height:100vh}
+.page{display:none;min-height:100vh}.page.active{display:block}
+.nbar{background:var(--gd);padding:.9rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;position:sticky;top:0;z-index:50}
+.nbar-logo{display:flex;align-items:center;gap:10px}
+.nbar-label{font-size:10px;color:rgba(255,255,255,.5);font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+.nbar-actions{display:flex;gap:6px;flex-wrap:wrap}
+.nbtn{background:rgba(255,255,255,.13);border:none;color:#fff;border-radius:8px;padding:.4rem .9rem;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+.nbtn:hover{background:rgba(255,255,255,.23)}
+.hero{background:var(--gd);padding:2.5rem 1.5rem 4rem;text-align:center;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-80px;right:-80px;width:280px;height:280px;background:var(--gm);border-radius:38% 62% 63% 37%;opacity:.3}
+.hero::after{content:'';position:absolute;bottom:-60px;left:-40px;width:180px;height:180px;background:var(--gb);border-radius:50%;opacity:.06}
+.hero h1{font-size:2rem;font-weight:800;color:#fff;letter-spacing:-1px;line-height:1.1;position:relative}
+.hero h1 em{color:var(--gb);font-style:normal}
+.hero p{color:rgba(255,255,255,.6);font-size:.9rem;margin-top:.6rem;line-height:1.6;position:relative;max-width:400px;margin-left:auto;margin-right:auto}
+.loading{text-align:center;padding:4rem 1rem;color:var(--inl)}
+.spin{display:inline-block;width:24px;height:24px;border:2.5px solid var(--bdr);border-top-color:var(--gb);border-radius:50%;animation:spin .7s linear infinite;margin-bottom:1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+.section{padding:1.5rem;max-width:820px;margin:0 auto}
+.section-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--inl);margin-bottom:.85rem}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(155px,1fr));gap:10px;margin-bottom:1.5rem}
+.tc{background:var(--wht);border:1.5px solid var(--bdr);border-radius:var(--rl);padding:.95rem;cursor:pointer;transition:all .15s;position:relative;text-align:left}
+.tc:hover{border-color:var(--gb);transform:translateY(-2px)}
+.tc.done{border-color:var(--gb)}.tc.due{border-color:var(--amber)}
+.av{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;margin-bottom:.65rem}
+.tc-name{font-weight:700;font-size:13px;line-height:1.3;color:var(--ink)}
+.tc-sub{font-size:11px;color:var(--inl);margin-top:3px}
+.tc-next{font-size:10px;font-weight:700;color:#d97706;margin-top:3px}
+.dot{position:absolute;top:10px;right:10px;width:9px;height:9px;border-radius:50%;background:var(--bdr)}
+.dot.done{background:var(--gb)}.dot.due{background:var(--amber)}
+.fhero{background:var(--gd);color:#fff;padding:2rem 1.5rem 3rem;position:relative;overflow:hidden}
+.fhero::after{content:'';position:absolute;bottom:-60px;right:-40px;width:180px;height:180px;border:40px solid rgba(46,204,113,.1);border-radius:50%}
+.eyebrow{font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--gb);margin-bottom:.4rem}
+.fhero h2{font-size:1.7rem;font-weight:800;letter-spacing:-.5px;line-height:1.15}
+.fhero p{color:rgba(255,255,255,.6);font-size:.82rem;line-height:1.65;margin-top:.5rem;max-width:460px}
+.fmeta{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.1);border-radius:20px;padding:.28rem .85rem;font-size:11px;margin-top:.75rem;opacity:.85}
+.fbody{padding:1.25rem 1rem 3rem;max-width:680px;margin:0 auto}
+.sc{background:var(--wht);border:1.5px solid var(--bdr);border-radius:var(--rl);padding:1.35rem;margin-bottom:.9rem}
+.sh{display:flex;align-items:center;gap:10px;margin-bottom:1.1rem}
+.si{width:33px;height:33px;border-radius:9px;background:var(--gp);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0}
+.st{font-size:13px;font-weight:700;color:var(--ink)}.ss{font-size:11px;color:var(--inl);margin-top:2px}
+.q{margin-bottom:1.15rem}.q:last-child{margin-bottom:0}
+.q label{display:block;font-size:13px;font-weight:600;color:var(--ink);margin-bottom:.5rem;line-height:1.4}
+.hint{font-weight:400;color:var(--inl);font-size:11px;display:block;margin-top:2px}
+textarea{width:100%;border:1.5px solid var(--bdr);border-radius:var(--r);padding:.7rem 1rem;font-size:13px;font-family:inherit;line-height:1.6;color:var(--ink);resize:vertical;min-height:78px;background:var(--gp);transition:border-color .15s,background .15s}
+textarea:focus{outline:none;border-color:var(--gb);background:var(--wht)}
+textarea::placeholder{color:#aecec0}
+.srow{display:flex;align-items:center;gap:10px;margin-top:.45rem}
+input[type=range]{flex:1;-webkit-appearance:none;height:4px;border-radius:2px;background:var(--bdr);outline:none;cursor:pointer}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:7px;background:var(--gd);cursor:pointer}
+.snum{min-width:36px;height:36px;border-radius:9px;background:var(--gd);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0}
+.slabs{display:flex;justify-content:space-between;font-size:10px;color:var(--inl);margin-top:6px}
+.erow{display:flex;gap:7px;flex-wrap:wrap}
+.eopt{flex:1;min-width:62px;border:1.5px solid var(--bdr);border-radius:var(--r);padding:.55rem .3rem;cursor:pointer;background:var(--gp);text-align:center;font-size:10px;color:var(--inl);transition:all .15s;font-weight:500}
+.eopt .em{font-size:20px;display:block;margin-bottom:4px;line-height:1}
+.eopt:hover,.eopt.sel{border-color:var(--gb);background:var(--gl);color:var(--gd)}
+.eopt.sel{font-weight:700}
+.prow{display:flex;flex-wrap:wrap;gap:7px}
+.pill{border:1.5px solid var(--bdr);border-radius:20px;padding:.35rem .9rem;font-size:12px;cursor:pointer;background:var(--gp);color:var(--inm);font-weight:500;transition:all .15s}
+.pill:hover{border-color:var(--gm)}.pill.sel{border-color:var(--gd);background:var(--gd);color:#fff}
+.sub-btn{width:100%;background:var(--gd);color:#fff;border:none;border-radius:var(--r);padding:1.05rem;font-size:15px;font-weight:700;cursor:pointer;margin-top:1.35rem;transition:opacity .15s;font-family:inherit}
+.sub-btn:hover{opacity:.87}.sub-btn:disabled{opacity:.5;cursor:not-allowed}
+.sub-note{text-align:center;font-size:11px;color:var(--inl);margin-top:.7rem;line-height:1.5}
+.err-msg{background:#fee2e2;border:1px solid #fca5a5;border-radius:var(--r);padding:.75rem 1rem;font-size:12px;color:#991b1b;margin-top:.75rem;display:none}
+.success-wrap{text-align:center;padding:4rem 1.5rem}
+.ssq{width:68px;height:68px;border-radius:16px;background:var(--gb);display:flex;align-items:center;justify-content:center;margin:0 auto 1.35rem;font-size:30px}
+.success-wrap h2{font-size:1.6rem;font-weight:800;margin-bottom:.6rem}
+.success-wrap p{color:var(--inl);max-width:320px;margin:0 auto;line-height:1.65;font-size:.9rem}
+.s-pill{background:var(--gd);color:#fff;border-radius:20px;padding:.45rem 1.2rem;font-size:12px;font-weight:600;display:inline-block;margin-top:1.35rem}
+.ghost-btn{background:none;border:1.5px solid var(--bdr);border-radius:var(--r);padding:.55rem 1.2rem;font-size:13px;cursor:pointer;color:var(--inm);margin-top:1rem;font-family:inherit;font-weight:500}
+.dbody{padding:1.35rem 1rem 3rem;max-width:900px;margin:0 auto}
+.info-bar{background:var(--gl);border:1px solid var(--gb);border-radius:var(--r);padding:.75rem 1rem;font-size:12px;color:var(--gm);margin-bottom:1rem;line-height:1.5;font-weight:500}
+.stats{display:grid;grid-template-columns:repeat(auto-fill,minmax(135px,1fr));gap:10px;margin-bottom:1.1rem}
+.sbox{background:var(--wht);border:1.5px solid var(--bdr);border-radius:var(--r);padding:.9rem 1rem}
+.sn{font-size:1.8rem;font-weight:800;color:var(--ink);line-height:1}.sn.g{color:var(--gm)}.sn.a{color:var(--amber)}
+.sl{font-size:11px;color:var(--inl);margin-top:4px;font-weight:500}
+.frow{display:flex;gap:7px;margin-bottom:1rem;flex-wrap:wrap;align-items:center}
+.fbtn{border:1.5px solid var(--bdr);background:var(--wht);border-radius:20px;padding:.32rem .9rem;font-size:12px;font-weight:600;cursor:pointer;color:var(--inm);font-family:inherit}
+.fbtn.on{background:var(--gd);color:#fff;border-color:var(--gd)}
+.refresh-btn{margin-left:auto;background:none;border:1.5px solid var(--bdr);border-radius:20px;padding:.32rem .9rem;font-size:12px;font-weight:600;cursor:pointer;color:var(--inm);font-family:inherit}
+.refresh-btn:hover{border-color:var(--gm);color:var(--gm)}
+.ttbl{background:var(--wht);border:1.5px solid var(--bdr);border-radius:var(--rl);overflow:hidden}
+.th{display:grid;grid-template-columns:42px 1fr 110px 100px 76px;gap:8px;padding:.65rem 1.1rem;border-bottom:1.5px solid var(--bdr);font-size:10px;font-weight:700;color:var(--inl);text-transform:uppercase;letter-spacing:.08em}
+.tr{display:grid;grid-template-columns:42px 1fr 110px 100px 76px;gap:8px;align-items:center;padding:.85rem 1.1rem;border-bottom:1px solid var(--gp);cursor:pointer;transition:background .1s}
+.tr:last-child{border-bottom:none}.tr:hover{background:var(--gp)}
+.tav{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff}
+.tn{font-weight:700;font-size:13px}.tsb{font-size:11px;color:var(--inl);margin-top:2px}
+.ebar{height:4px;background:var(--bdr);border-radius:2px;margin-top:5px}
+.efill{height:100%;border-radius:2px;background:var(--gb)}
+.ev{font-size:12px;font-weight:600;color:var(--inm)}
+.badge{font-size:10px;font-weight:700;padding:3px 10px;border-radius:20px;text-align:center;white-space:nowrap}
+.bdone{background:var(--gl);color:var(--gm)}.bpend{background:var(--off);color:var(--inl);border:1px solid var(--bdr)}
+.modal-bg{position:fixed;inset:0;background:rgba(13,31,23,.6);z-index:100;display:none;align-items:center;justify-content:center;padding:1rem}
+.modal-bg.open{display:flex}
+.modal{background:var(--wht);border-radius:var(--rl);max-width:580px;width:100%;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.25)}
+.modal-top{background:var(--gd);padding:1.25rem 1.5rem;display:flex;align-items:flex-start;justify-content:space-between;border-radius:var(--rl) var(--rl) 0 0;position:sticky;top:0}
+.modal-top h3{font-size:1rem;font-weight:800;color:#fff}
+.modal-top p{font-size:11px;color:rgba(255,255,255,.55);margin-top:3px}
+.modal-x{background:rgba(255,255,255,.12);border:none;color:#fff;width:30px;height:30px;border-radius:8px;font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.modal-x:hover{background:rgba(255,255,255,.22)}
+.modal-body{padding:1.1rem 1.5rem}
+.mi{border-bottom:1px solid var(--gp);padding:.7rem 0}.mi:last-child{border-bottom:none}
+.miq{font-size:10px;font-weight:700;color:var(--inl);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px}
+.mia{font-size:13px;color:var(--ink);line-height:1.55}.mia.empty{color:#aecec0;font-style:italic}
+.nodatabox{text-align:center;padding:1.75rem;color:var(--inl);font-size:13px}
+.cal-card{background:var(--wht);border:1.5px solid var(--bdr);border-radius:var(--rl);overflow:hidden;margin-bottom:1rem}
+.cal-top{background:var(--gd);padding:.9rem 1.25rem;display:flex;align-items:center;justify-content:space-between}
+.cal-top h3{font-size:.95rem;font-weight:700;color:#fff}
+.cal-nav{background:rgba(255,255,255,.15);border:none;color:#fff;border-radius:7px;width:30px;height:30px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center}
+.cal-nav:hover{background:rgba(255,255,255,.25)}
+.cal-grid{display:grid;grid-template-columns:repeat(7,1fr)}
+.cal-dow{padding:.5rem 0;text-align:center;font-size:10px;font-weight:700;color:var(--inl);text-transform:uppercase;border-bottom:1px solid var(--gp);background:var(--off)}
+.cal-day{padding:.5rem .2rem;text-align:center;font-size:12px;min-height:48px;border-right:1px solid var(--gp);border-bottom:1px solid var(--gp);position:relative}
+.cal-day:nth-child(7n){border-right:none}
+.cal-day.other{color:var(--bdr)}
+.cal-day.today .dn{background:var(--gd);color:#fff;border-radius:50%;width:24px;height:24px;display:inline-flex;align-items:center;justify-content:center;margin:0 auto}
+.cal-day.has121{background:var(--gp)}
+.dn{font-weight:600;display:block}
+.cdots{display:flex;justify-content:center;gap:2px;margin-top:3px;flex-wrap:wrap}
+.cdots span{width:5px;height:5px;border-radius:50%;background:var(--gb);display:block}
+.cal-legend{display:flex;gap:1rem;padding:.7rem 1.25rem;border-top:1px solid var(--gp);flex-wrap:wrap;background:var(--off)}
+.leg{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--inm);font-weight:500}
+.leg-dot{width:8px;height:8px;border-radius:50%}
+.log-body{padding:.8rem 1.25rem}
+.log-row{display:flex;align-items:center;justify-content:space-between;padding:.65rem 0;border-bottom:1px solid var(--gp);flex-wrap:wrap;gap:6px}
+.log-row:last-child{border-bottom:none}
+.log-l{display:flex;align-items:center;gap:10px}
+.log-av{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:11px;color:#fff;flex-shrink:0}
+.log-name{font-weight:700;font-size:13px}
+.log-meta{font-size:11px;color:var(--inl);margin-top:1px}
+.log-r{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.lbtn{background:none;border:1.5px solid var(--bdr);border-radius:7px;padding:.3rem .75rem;font-size:11px;cursor:pointer;color:var(--inm);font-weight:600;font-family:inherit}
+.lbtn:hover{border-color:var(--gm)}.lbtn.add{background:var(--gd);color:#fff;border-color:var(--gd)}
+.nd{font-size:10px;font-weight:700;padding:3px 8px;border-radius:10px;white-space:nowrap}
+.nd-ok{background:var(--gl);color:var(--gm)}.nd-due{background:#fef3c7;color:#92400e}.nd-over{background:#fee2e2;color:#991b1b}
+.dp-row{background:var(--gp);border-radius:var(--r);padding:.65rem .9rem;margin:.35rem 0;display:none;align-items:center;gap:8px;flex-wrap:wrap}
+.dp-row.open{display:flex}
+.dp-row input[type=date]{border:1.5px solid var(--bdr);border-radius:8px;padding:.38rem .75rem;font-size:12px;font-family:inherit;color:var(--ink);background:var(--wht)}
+.dp-save{background:var(--gd);color:#fff;border:none;border-radius:8px;padding:.38rem .85rem;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit}
+.dp-cancel{background:none;border:1.5px solid var(--bdr);border-radius:8px;padding:.38rem .75rem;font-size:12px;cursor:pointer;color:var(--inm);font-family:inherit}
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div id="pLanding" class="page active">
+  <div class="nbar">
+    <div class="nbar-logo">
+      <img src="./small-OVO-logo-green.jpg" style="height:38px;width:38px;object-fit:contain;border-radius:8px">
+      <span class="nbar-label">People &amp; Culture</span>
+    </div>
+    <div class="nbar-actions">
+      <button class="nbtn" onclick="requirePIN('dashboard')">Manager dashboard</button>
+      <button class="nbtn" onclick="requirePIN('calendar')">Calendar</button>
+    </div>
+  </div>
+  <div class="hero">
+    <h1>Your fortnightly<br><em>1-2-1 check-in</em></h1>
+    <p>A few minutes to reflect before your chat. Honest, open, yours.</p>
+  </div>
+  <div class="section">
+    <div class="section-label">Select your name</div>
+    <div id="teamGrid" class="tgrid"></div>
+  </div>
+</div>
+
+<!-- FORM -->
+<div id="pForm" class="page">
+  <div class="nbar">
+    <button class="nbtn" onclick="showPage('landing')">&#8592; Back</button>
+    <img src="./small-OVO-logo-green.jpg" style="height:38px;width:38px;object-fit:contain;border-radius:8px">
+  </div>
+  <div class="fhero">
+    <div class="eyebrow">Fortnightly 1-2-1</div>
+    <h2 id="fhName">Hi there</h2>
+    <p>Be as honest as you like. Your manager reviews this before your check-in so you can make the most of your time together.</p>
+    <div class="fmeta" id="fhDate"></div>
+  </div>
+  <div class="fbody">
+    <div class="sc">
+      <div class="sh"><div class="si">&#127807;</div><div><div class="st">Wellbeing</div><div class="ss">How are you really doing?</div></div></div>
+      <div class="q"><label>How are you feeling right now?</label>
+        <div class="erow" id="epFeeling">
+          <div class="eopt" data-v="Struggling" onclick="pe(this,'epFeeling')"><span class="em">&#128532;</span>Struggling</div>
+          <div class="eopt" data-v="Okay" onclick="pe(this,'epFeeling')"><span class="em">&#128528;</span>Okay</div>
+          <div class="eopt" data-v="Good" onclick="pe(this,'epFeeling')"><span class="em">&#128578;</span>Good</div>
+          <div class="eopt" data-v="Great" onclick="pe(this,'epFeeling')"><span class="em">&#128516;</span>Great</div>
+          <div class="eopt" data-v="Energised" onclick="pe(this,'epFeeling')"><span class="em">&#128640;</span>Energised</div>
+        </div>
+      </div>
+      <div class="q"><label>Anything affecting your wellbeing outside work?<span class="hint">Optional</span></label><textarea id="fWellbeing" placeholder="E.g. family, health, life admin..."></textarea></div>
+      <div class="q"><label>How is your workload feeling?</label>
+        <div class="srow"><input type="range" min="1" max="10" value="5" step="1" id="sWorkload" oninput="sv('sWorkload','nWorkload')"><div class="snum" id="nWorkload">5</div></div>
+        <div class="slabs"><span>Too light</span><span>Just right</span><span>Overwhelming</span></div>
+      </div>
+    </div>
+    <div class="sc">
+      <div class="sh"><div class="si">&#9889;</div><div><div class="st">Engagement &amp; energy</div><div class="ss">How connected do you feel?</div></div></div>
+      <div class="q"><label>Engagement right now (1-10)</label>
+        <div class="srow"><input type="range" min="1" max="10" value="7" step="1" id="sEngagement" oninput="sv('sEngagement','nEngagement')"><div class="snum" id="nEngagement">7</div></div>
+        <div class="slabs"><span>Checked out</span><span>Neutral</span><span>Fully in</span></div>
+      </div>
+      <div class="q"><label>What's energising you most right now?</label><textarea id="fEnergising" placeholder="What's giving you that spark?"></textarea></div>
+      <div class="q"><label>What's draining your energy or enthusiasm?</label><textarea id="fDraining" placeholder="Frustrations, blockers, demotivators..."></textarea></div>
+    </div>
+    <div class="sc">
+      <div class="sh"><div class="si">&#127919;</div><div><div class="st">Goals &amp; growth</div><div class="ss">Where you're headed</div></div></div>
+      <div class="q"><label>What do you most want to achieve in the next 2 weeks?</label><textarea id="fGoals" placeholder="Your main focus or priority..."></textarea></div>
+      <div class="q"><label>What's getting in your way?<span class="hint">Blockers, dependencies, lack of clarity?</span></label><textarea id="fBlockers" placeholder="Anything stopping you doing your best work?"></textarea></div>
+      <div class="q"><label>Is there anything you want to learn or develop?</label><textarea id="fDev" placeholder="Skills, stretch opportunities..."></textarea></div>
+    </div>
+    <div class="sc">
+      <div class="sh"><div class="si">&#129309;</div><div><div class="st">Support &amp; your manager</div><div class="ss">How we work together</div></div></div>
+      <div class="q"><label>Do you feel supported in your role right now?</label>
+        <div class="erow" id="epSupported">
+          <div class="eopt" data-v="Not really" onclick="pe(this,'epSupported')"><span class="em">&#128533;</span>Not really</div>
+          <div class="eopt" data-v="Somewhat" onclick="pe(this,'epSupported')"><span class="em">&#129300;</span>Somewhat</div>
+          <div class="eopt" data-v="Yes" onclick="pe(this,'epSupported')"><span class="em">&#128077;</span>Yes</div>
+          <div class="eopt" data-v="Absolutely" onclick="pe(this,'epSupported')"><span class="em">&#128170;</span>Absolutely</div>
+        </div>
+      </div>
+      <div class="q"><label>What do you need most from me as your manager?</label>
+        <div class="prow" id="pillNeeds">
+          <div class="pill" onclick="tp(this)">More direction</div>
+          <div class="pill" onclick="tp(this)">More autonomy</div>
+          <div class="pill" onclick="tp(this)">More feedback</div>
+          <div class="pill" onclick="tp(this)">Recognition</div>
+          <div class="pill" onclick="tp(this)">Remove a blocker</div>
+          <div class="pill" onclick="tp(this)">Just to listen</div>
+          <div class="pill" onclick="tp(this)">Help with workload</div>
+          <div class="pill" onclick="tp(this)">Career guidance</div>
+        </div>
+      </div>
+      <div class="q"><label>Anything else you need from me?</label><textarea id="fNeedsOther" placeholder="Other support you're looking for..."></textarea></div>
+    </div>
+    <div class="sc">
+      <div class="sh"><div class="si">&#128172;</div><div><div class="st">Observations &amp; free space</div><div class="ss">Anything else on your mind</div></div></div>
+      <div class="q"><label>Observations on the team, culture, or ways of working?<span class="hint">Things you're noticing</span></label><textarea id="fObs" placeholder="What are you seeing from your vantage point?"></textarea></div>
+      <div class="q"><label>Specific topics to cover in our 1-2-1?</label><textarea id="fAgenda" placeholder="Questions, concerns, things on your mind..."></textarea></div>
+      <div class="q"><label>Anything else you want to share?<span class="hint">This is your space</span></label><textarea id="fFree" placeholder="Anything at all..."></textarea></div>
+    </div>
+    <button class="sub-btn" id="subBtn" onclick="submitForm()">Submit my check-in &#8594;</button>
+    <div class="err-msg" id="errMsg">Something went wrong. Please try again.</div>
+    <div class="sub-note">Your response goes straight to your manager's Google Sheet.</div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div id="pSuccess" class="page">
+  <div class="nbar"><img src="./small-OVO-logo-green.jpg" style="height:38px;width:38px;object-fit:contain;border-radius:8px"></div>
+  <div class="success-wrap">
+    <div class="ssq">&#10003;</div>
+    <h2>All done, <span id="succName"></span>!</h2>
+    <p>Your check-in has been saved to your manager's Google Sheet. They'll review it before your 1-2-1.</p>
+    <div class="s-pill">Together we have the power</div><br>
+    <button class="ghost-btn" onclick="showPage('landing')">&#8592; Back to home</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="pDashboard" class="page">
+  <div class="nbar">
+    <div class="nbar-logo">
+      <img src="./small-OVO-logo-green.jpg" style="height:38px;width:38px;object-fit:contain;border-radius:8px">
+      <span class="nbar-label">Manager view</span>
+    </div>
+    <div class="nbar-actions">
+      <button class="nbtn" onclick="requirePIN('calendar')">Calendar</button>
+      <button class="nbtn" onclick="showPage('landing')">&#8592; Home</button>
+    </div>
+  </div>
+  <div style="background:var(--gd);padding:1.5rem 1.5rem 2rem">
+    <div class="eyebrow">Manager view</div>
+    <h1 style="font-size:1.4rem;font-weight:800;letter-spacing:-.5px;margin-top:.2rem;color:#fff">Team 1-2-1 dashboard</h1>
+  </div>
+  <div class="dbody">
+    <div class="info-bar">Live - responses appear here the moment your team submits, from any device.</div>
+    <div id="dashLoading" class="loading"><div class="spin"></div><br>Loading from Google Sheets...</div>
+    <div id="dashContent" style="display:none">
+      <div class="stats" id="dStats"></div>
+      <div class="frow">
+        <button class="fbtn on" onclick="setF('all',this)">All</button>
+        <button class="fbtn" onclick="setF('done',this)">Submitted</button>
+        <button class="fbtn" onclick="setF('pend',this)">Pending</button>
+        <button class="refresh-btn" onclick="loadDashboard()">&#8635; Refresh</button>
+      </div>
+      <div class="ttbl">
+        <div class="th"><div></div><div>Name</div><div>Engagement</div><div>Submitted</div><div>Status</div></div>
+        <div id="dRows"></div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-bg" id="modal" onclick="closeModal(event)">
+    <div class="modal">
+      <div class="modal-top"><div><h3 id="mName"></h3><p id="mDate"></p></div><button class="modal-x" onclick="closeModalBtn()">&#215;</button></div>
+      <div class="modal-body" id="mBody"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CALENDAR -->
+<div id="pCalendar" class="page">
+  <div class="nbar">
+    <div class="nbar-logo">
+      <img src="./small-OVO-logo-green.jpg" style="height:38px;width:38px;object-fit:contain;border-radius:8px">
+      <span class="nbar-label">1-2-1 tracker</span>
+    </div>
+    <div class="nbar-actions">
+      <button class="nbtn" onclick="requirePIN('dashboard')">Dashboard</button>
+      <button class="nbtn" onclick="showPage('landing')">&#8592; Home</button>
+    </div>
+  </div>
+  <div style="background:var(--gd);padding:1.5rem 1.5rem 2rem">
+    <div class="eyebrow">1-2-1 tracker</div>
+    <h1 style="font-size:1.4rem;font-weight:800;letter-spacing:-.5px;margin-top:.2rem;color:#fff">Meeting calendar</h1>
+  </div>
+  <div class="dbody">
+    <div class="cal-card">
+      <div class="cal-top"><button class="cal-nav" onclick="calShift(-1)">&#8249;</button><h3 id="calTitle"></h3><button class="cal-nav" onclick="calShift(1)">&#8250;</button></div>
+      <div class="cal-grid" id="calGrid"></div>
+      <div class="cal-legend"><div class="leg"><div class="leg-dot" style="background:var(--gb)"></div>1-2-1 held</div><div class="leg"><div class="leg-dot" style="background:var(--gd)"></div>Today</div></div>
+    </div>
+    <div class="cal-card"><div class="cal-top"><h3>Log a 1-2-1 meeting</h3></div><div class="log-body" id="logArea"></div></div>
+    <div class="cal-card"><div class="cal-top"><h3>Upcoming schedule</h3></div><div class="log-body" id="upcomingArea"></div></div>
+  </div>
+</div>
+
+<!-- PIN MODAL -->
+<div id="pinModal" style="display:none;position:fixed;inset:0;background:rgba(13,31,23,.75);z-index:200;align-items:center;justify-content:center;padding:1rem">
+  <div style="background:#fff;border-radius:16px;max-width:320px;width:100%;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+    <div style="background:#0D3D2B;padding:1.25rem 1.5rem">
+      <div style="font-size:10px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#2ECC71;margin-bottom:.3rem">Manager access</div>
+      <h3 style="font-size:1rem;font-weight:800;color:#fff;margin:0">Enter your PIN</h3>
+    </div>
+    <div style="padding:1.25rem 1.5rem">
+      <p style="font-size:13px;color:#7A9488;margin-bottom:1rem;line-height:1.5">This area is for managers only.</p>
+      <input type="password" id="pinInput" maxlength="6" placeholder="&#8226;&#8226;&#8226;&#8226;"
+        style="width:100%;border:1.5px solid #DDE9E3;border-radius:10px;padding:.75rem 1rem;font-size:22px;font-family:inherit;letter-spacing:.4em;text-align:center;color:#0D1F17;background:#EEF9F3;margin-bottom:.5rem;outline:none"
+        onkeydown="if(event.key==='Enter')checkPIN()">
+      <div id="pinError" style="display:none;font-size:12px;color:#991b1b;margin-bottom:.5rem;text-align:center;font-weight:500">Incorrect PIN. Try again.</div>
+      <div style="display:flex;gap:8px;margin-top:.75rem">
+        <button onclick="checkPIN()" style="flex:1;background:#0D3D2B;color:#fff;border:none;border-radius:10px;padding:.75rem;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit">Enter</button>
+        <button onclick="closePIN()" style="background:none;border:1.5px solid #DDE9E3;border-radius:10px;padding:.75rem 1rem;font-size:14px;cursor:pointer;color:#3D5446;font-family:inherit">Cancel</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const SHEET_URL='https://script.google.com/a/macros/ovo.com/s/AKfycbxbWUqXPApjgbuQS-A8nzGEcXdeVI2wdsf_Gz4wvWDMYWn1XSFgURzVbTVF8g8T-Hmt/exec';
+const MANAGER_PIN='1212';
+const TEAM=[
+  {name:'Aaron Williams',id:'aaron_w'},{name:'Anthony Fish',id:'anthony_f'},
+  {name:'Campbell Wright',id:'campbell_w'},{name:'Gary Munro',id:'gary_m'},
+  {name:'Jack Woods',id:'jack_w'},{name:'Joshua Nicholls',id:'joshua_n'},
+  {name:'Ken Hang',id:'ken_h'},{name:'Mitch Quayle',id:'mitch_q'},
+  {name:'Paul Crook',id:'paul_c'},{name:'Ryan Appiah',id:'ryan_a'},
+  {name:'Scott Robertson',id:'scott_r'},{name:'Suleman Khan',id:'suleman_k'},
+  {name:'Temitope Orunsolu',id:'temitope_o'},
+];
+const COLS=['#0D3D2B','#1A6B47','#186B42','#0D5C38','#0A4433','#23A05A','#1F7D4B','#106038','#154D32','#19804A','#0E4D2D','#27B560','#156B3A'];
+const FORT=14;
+let curMember=null,dashFilter='all',dashData={};
+let calY=new Date().getFullYear(),calM=new Date().getMonth(),openDP=null,calData={};
+let pinTarget=null,pinUnlocked=false;
+
+function ini(n){return n.split(' ').map(p=>p[0]).join('').slice(0,2).toUpperCase()}
+function td(){return new Date().toISOString().slice(0,10)}
+function addD(iso,n){const d=new Date(iso);d.setDate(d.getDate()+n);return d.toISOString().slice(0,10)}
+function diffD(a,b){return Math.round((new Date(b)-new Date(a))/864e5)}
+function fmtD(iso){if(!iso)return'--';return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'})}
+function fmtS(iso){if(!iso)return'--';return new Date(iso).toLocaleDateString('en-GB',{day:'numeric',month:'short'})}
+function lastMtg(id){const h=calData[id]||[];return h.length?[...h].sort((a,b)=>b.localeCompare(a))[0]:null}
+function nextDue(id){const l=lastMtg(id);return l?addD(l,FORT):null}
+function isDue(id){const nd=nextDue(id);if(!nd)return false;const d=diffD(td(),nd);return d>=-3&&d<=3}
+function isOver(id){const nd=nextDue(id);if(!nd)return false;return diffD(td(),nd)<-3}
+function loadCal(){try{const r=localStorage.getItem('ovo121_cal');return r?JSON.parse(r):{}}catch(e){return{}}}
+function saveCal(){try{localStorage.setItem('ovo121_cal',JSON.stringify(calData))}catch(e){}}
+
+function requirePIN(page){
+  if(pinUnlocked){showPage(page);return;}
+  pinTarget=page;
+  document.getElementById('pinInput').value='';
+  document.getElementById('pinError').style.display='none';
+  document.getElementById('pinModal').style.display='flex';
+  setTimeout(function(){document.getElementById('pinInput').focus();},100);
+}
+function checkPIN(){
+  const val=document.getElementById('pinInput').value;
+  if(val===MANAGER_PIN){
+    pinUnlocked=true;
+    document.getElementById('pinModal').style.display='none';
+    showPage(pinTarget);
+  } else {
+    document.getElementById('pinError').style.display='block';
+    document.getElementById('pinInput').value='';
+    document.getElementById('pinInput').focus();
+  }
+}
+function closePIN(){
+  document.getElementById('pinModal').style.display='none';
+  pinTarget=null;
+}
+
+function showPage(p){
+  document.querySelectorAll('.page').forEach(function(el){el.classList.remove('active');});
+  document.getElementById('p'+p[0].toUpperCase()+p.slice(1)).classList.add('active');
+  window.scrollTo(0,0);
+  if(p==='landing')buildLanding();
+  if(p==='dashboard')loadDashboard();
+  if(p==='calendar'){renderCal();renderLog();renderUpcoming();}
+}
+
+function buildLanding(){
+  const g=document.getElementById('teamGrid');g.innerHTML='';
+  TEAM.forEach(function(m,i){
+    const done=!!dashData[m.name],due=isDue(m.id),nd=nextDue(m.id);
+    const c=document.createElement('div');
+    c.className='tc'+(done?' done':due?' due':'');
+    c.innerHTML='<div class="dot'+(done?' done':due?' due':'')+'"></div><div class="av" style="background:'+COLS[i%COLS.length]+'">'+ini(m.name)+'</div><div class="tc-name">'+m.name+'</div><div class="tc-sub">'+(done?'Submitted':'Tap to complete')+'</div>'+(nd?'<div class="tc-next">Next: '+fmtS(nd)+'</div>':'');
+    c.onclick=function(){openForm(m,i);};
+    g.appendChild(c);
+  });
+}
+
+function openForm(m,ci){
+  curMember=Object.assign({},m,{ci:ci});
+  document.getElementById('fhName').textContent='Hi '+m.name.split(' ')[0]+' &#128075;';
+  document.getElementById('fhDate').textContent='&#128197; '+new Date().toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+  resetForm();showPage('form');
+}
+function resetForm(){
+  ['fWellbeing','fEnergising','fDraining','fGoals','fBlockers','fDev','fNeedsOther','fObs','fAgenda','fFree'].forEach(function(id){document.getElementById(id).value='';});
+  document.getElementById('sWorkload').value=5;document.getElementById('nWorkload').textContent='5';
+  document.getElementById('sEngagement').value=7;document.getElementById('nEngagement').textContent='7';
+  document.querySelectorAll('.eopt,.pill').forEach(function(e){e.classList.remove('sel');});
+  document.getElementById('errMsg').style.display='none';
+}
+function submitForm(){
+  const btn=document.getElementById('subBtn');
+  btn.disabled=true;btn.textContent='Saving...';
+  document.getElementById('errMsg').style.display='none';
+  const needs=[];
+  document.querySelectorAll('#pillNeeds .pill.sel').forEach(function(p){needs.push(p.textContent);});
+  const data={
+    name:curMember.name,ts:new Date().toISOString(),
+    feeling:(document.querySelector('#epFeeling .sel')||{dataset:{}}).dataset.v||'',
+    wellbeing:document.getElementById('fWellbeing').value,
+    workload:document.getElementById('sWorkload').value,
+    engagement:document.getElementById('sEngagement').value,
+    energising:document.getElementById('fEnergising').value,
+    draining:document.getElementById('fDraining').value,
+    goals:document.getElementById('fGoals').value,
+    blockers:document.getElementById('fBlockers').value,
+    dev:document.getElementById('fDev').value,
+    supported:(document.querySelector('#epSupported .sel')||{dataset:{}}).dataset.v||'',
+    needs:needs,
+    needsOther:document.getElementById('fNeedsOther').value,
+    obs:document.getElementById('fObs').value,
+    agenda:document.getElementById('fAgenda').value,
+    free:document.getElementById('fFree').value,
+    meetingHistory:(calData[curMember.id]||[]).join(', ')
+  };
+  fetch(SHEET_URL,{method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
+    .then(function(){
+      dashData[curMember.name]=data;
+      const t=td(),h=(calData[curMember.id]||[]).slice();
+      if(h.indexOf(t)<0){h.push(t);calData[curMember.id]=h;saveCal();}
+      document.getElementById('succName').textContent=curMember.name.split(' ')[0];
+      buildLanding();showPage('success');
+      btn.disabled=false;btn.textContent='Submit my check-in \u2192';
+    })
+    .catch(function(){
+      document.getElementById('errMsg').style.display='block';
+      btn.disabled=false;btn.textContent='Submit my check-in \u2192';
+    });
+}
+function sv(s,n){document.getElementById(n).textContent=document.getElementById(s).value;}
+function pe(el,g){document.querySelectorAll('#'+g+' .eopt').forEach(function(e){e.classList.remove('sel');});el.classList.add('sel');}
+function tp(el){el.classList.toggle('sel');}
+
+function loadDashboard(){
+  document.getElementById('dashLoading').style.display='block';
+  document.getElementById('dashContent').style.display='none';
+  fetch(SHEET_URL+'?action=read',{mode:'cors'})
+    .then(function(r){return r.json();})
+    .then(function(json){
+      const rows=json.data||[];
+      dashData={};
+      rows.forEach(function(row){
+        const name=row['Name']||row['name'];
+        if(!name)return;
+        const ts=row['Submitted At']||row['ts']||'';
+        if(!dashData[name]||new Date(ts)>new Date(dashData[name].ts||0)){
+          dashData[name]={name:name,ts:ts,
+            feeling:row['Feeling']||'',wellbeing:row['Wellbeing Outside Work']||'',
+            workload:row['Workload']||'',engagement:row['Engagement']||'',
+            energising:row['Energising']||'',draining:row['Draining']||'',
+            goals:row['Goals']||'',blockers:row['Blockers']||'',dev:row['Development']||'',
+            supported:row['Feels Supported']||'',needs:row['Needs From Manager']||'',
+            needsOther:row['Other Support']||'',obs:row['Team Observations']||'',
+            agenda:row['Agenda']||'',free:row['Anything Else']||''};
+        }
+      });
+      renderDash();
+      document.getElementById('dashLoading').style.display='none';
+      document.getElementById('dashContent').style.display='block';
+    })
+    .catch(function(){
+      document.getElementById('dashLoading').innerHTML='<p style="color:#991b1b;font-size:13px;padding:1rem">Could not load data. Make sure your Apps Script is deployed with access set to <strong>Anyone</strong> and redeploy as a new version.</p>';
+    });
+}
+function renderDash(){
+  const sub=TEAM.filter(function(m){return !!dashData[m.name];});
+  const avgE=sub.length?(sub.reduce(function(a,m){return a+parseInt(dashData[m.name].engagement||5);},0)/sub.length).toFixed(1):'--';
+  const due=TEAM.filter(function(m){return isDue(m.id)||isOver(m.id);});
+  document.getElementById('dStats').innerHTML='<div class="sbox"><div class="sn">'+TEAM.length+'</div><div class="sl">Team members</div></div><div class="sbox"><div class="sn g">'+sub.length+'</div><div class="sl">Submitted</div></div><div class="sbox"><div class="sn">'+(TEAM.length-sub.length)+'</div><div class="sl">Pending</div></div><div class="sbox"><div class="sn a">'+due.length+'</div><div class="sl">Due soon</div></div><div class="sbox"><div class="sn g">'+avgE+'</div><div class="sl">Avg engagement</div></div>';
+  renderRows();
+}
+function setF(f,btn){dashFilter=f;document.querySelectorAll('.fbtn').forEach(function(b){b.classList.remove('on');});btn.classList.add('on');renderRows();}
+function renderRows(){
+  const body=document.getElementById('dRows');body.innerHTML='';
+  TEAM.forEach(function(m,i){
+    const d=dashData[m.name],done=!!d;
+    if(dashFilter==='done'&&!done)return;
+    if(dashFilter==='pend'&&done)return;
+    const eng=d?parseInt(d.engagement):null;
+    const row=document.createElement('div');row.className='tr';
+    row.innerHTML='<div class="tav" style="background:'+COLS[i%COLS.length]+'">'+ini(m.name)+'</div><div><div class="tn">'+m.name+'</div><div class="tsb">'+(done?'Submitted '+fmtS(d.ts):'Not yet submitted')+'</div></div><div>'+(done?'<div class="ev">'+eng+'/10</div><div class="ebar"><div class="efill" style="width:'+Math.round(eng*10)+'%"></div></div>':'<span style="color:var(--bdr)">--</span>')+'</div><div style="font-size:12px;font-weight:500;color:var(--inm)">'+(done?fmtS(d.ts):'--')+'</div><div><span class="badge '+(done?'bdone':'bpend')+'">'+(done?'Done':'Pending')+'</span></div>';
+    row.onclick=function(){openModal(m,d);};
+    body.appendChild(row);
+  });
+}
+function openModal(m,d){
+  document.getElementById('mName').textContent=m.name;
+  document.getElementById('mDate').textContent=d?'Submitted '+fmtD(d.ts):'No submission yet';
+  const body=document.getElementById('mBody');
+  if(!d){body.innerHTML='<div class="nodatabox">'+m.name.split(' ')[0]+' has not submitted yet.</div>';}
+  else{
+    var rows=[['Feeling',d.feeling],['Wellbeing outside work',d.wellbeing],['Workload (1-10)',d.workload],['Engagement (1-10)',d.engagement],['Energising them',d.energising],['Draining them',d.draining],['Goals next 2 weeks',d.goals],['Blockers',d.blockers],['Development',d.dev],['Feels supported?',d.supported],['Needs from you',d.needs],['Other support',d.needsOther],['Team observations',d.obs],['Agenda for 1-2-1',d.agenda],['Anything else',d.free]];
+    body.innerHTML=rows.map(function(qa){return '<div class="mi"><div class="miq">'+qa[0]+'</div><div class="mia '+(qa[1]?'':'empty')+'">'+(qa[1]||'Nothing shared')+'</div></div>';}).join('');
+  }
+  document.getElementById('modal').classList.add('open');
+}
+function closeModalBtn(){document.getElementById('modal').classList.remove('open');}
+function closeModal(e){if(e.target===document.getElementById('modal'))closeModalBtn();}
+
+function calShift(dir){calM+=dir;if(calM>11){calM=0;calY++;}if(calM<0){calM=11;calY--;}renderCal();}
+function renderCal(){
+  var MONTHS=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  document.getElementById('calTitle').textContent=MONTHS[calM]+' '+calY;
+  var grid=document.getElementById('calGrid');grid.innerHTML='';
+  ['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].forEach(function(d){var el=document.createElement('div');el.className='cal-dow';el.textContent=d;grid.appendChild(el);});
+  var start=new Date(calY,calM,1).getDay()-1;if(start<0)start=6;
+  var dim=new Date(calY,calM+1,0).getDate();
+  var allDates={};
+  TEAM.forEach(function(m){(calData[m.id]||[]).forEach(function(dt){if(!allDates[dt])allDates[dt]=[];allDates[dt].push(m.id);});});
+  var todayStr=td();
+  for(var i=0;i<42;i++){
+    var cell=document.createElement('div');
+    var day,ds,other=false;
+    if(i<start){day=new Date(calY,calM,0).getDate()-start+i+1;other=true;var pm=calM===0?12:calM;ds=(calM===0?calY-1:calY)+'-'+String(pm).padStart(2,'0')+'-'+String(day).padStart(2,'0');}
+    else if(i-start>=dim){day=i-start-dim+1;other=true;var nm=calM===11?1:calM+2;ds=(calM===11?calY+1:calY)+'-'+String(nm).padStart(2,'0')+'-'+String(day).padStart(2,'0');}
+    else{day=i-start+1;ds=calY+'-'+String(calM+1).padStart(2,'0')+'-'+String(day).padStart(2,'0');}
+    cell.className='cal-day'+(other?' other':'')+(ds===todayStr?' today':'')+(allDates[ds]&&!other?' has121':'');
+    var dots=allDates[ds]&&!other?'<div class="cdots">'+allDates[ds].slice(0,6).map(function(){return '<span></span>';}).join('')+'</div>':'';
+    cell.innerHTML='<span class="dn">'+day+'</span>'+dots;
+    if(allDates[ds]&&!other)cell.title=allDates[ds].map(function(id){var m=TEAM.find(function(m){return m.id===id;});return m?m.name:'';}).filter(Boolean).join(', ');
+    grid.appendChild(cell);
+  }
+}
+function renderLog(){
+  var area=document.getElementById('logArea');area.innerHTML='';
+  TEAM.forEach(function(m,i){
+    var last=lastMtg(m.id),hist=calData[m.id]||[];
+    var row=document.createElement('div');row.className='log-row';
+    var dpId='dp_'+m.id;
+    row.innerHTML='<div class="log-l"><div class="log-av" style="background:'+COLS[i%COLS.length]+'">'+ini(m.name)+'</div><div><div class="log-name">'+m.name+'</div><div class="log-meta">Last: '+(last?fmtS(last):'Never')+'</div></div></div><div class="log-r"><button class="lbtn add" onclick="toggleDP(\''+dpId+'\')">+ Log</button>'+(hist.length?'<button class="lbtn" onclick="clearLast(\''+m.id+'\')">Clear last</button>':'')+'</div>';
+    var dp=document.createElement('div');dp.className='dp-row';dp.id=dpId;
+    dp.innerHTML='<input type="date" id="di_'+m.id+'" value="'+td()+'"><button class="dp-save" onclick="saveLog(\''+m.id+'\',\''+dpId+'\')">Save</button><button class="dp-cancel" onclick="toggleDP(\''+dpId+'\')">Cancel</button>';
+    area.appendChild(row);area.appendChild(dp);
+  });
+}
+function toggleDP(id){
+  if(openDP&&openDP!==id){var prev=document.getElementById(openDP);if(prev)prev.classList.remove('open');}
+  var el=document.getElementById(id);if(el){el.classList.toggle('open');openDP=el.classList.contains('open')?id:null;}
+}
+function saveLog(mid,dpId){
+  var val=document.getElementById('di_'+mid).value;if(!val)return;
+  var h=(calData[mid]||[]).slice();
+  if(h.indexOf(val)<0){h.push(val);calData[mid]=h;saveCal();}
+  document.getElementById(dpId).classList.remove('open');openDP=null;
+  renderLog();renderCal();renderUpcoming();buildLanding();
+}
+function clearLast(mid){
+  var h=(calData[mid]||[]).slice();if(!h.length)return;
+  var sorted=h.slice().sort(function(a,b){return b.localeCompare(a);});
+  calData[mid]=h.filter(function(d){return d!==sorted[0];});saveCal();
+  renderLog();renderCal();renderUpcoming();buildLanding();
+}
+function renderUpcoming(){
+  var area=document.getElementById('upcomingArea');area.innerHTML='';
+  var items=TEAM.map(function(m,i){return {m:m,i:i,nd:nextDue(m.id),last:lastMtg(m.id)};}).filter(function(x){return !!x.nd;}).sort(function(a,b){return a.nd.localeCompare(b.nd);});
+  if(!items.length){area.innerHTML='<div style="padding:.5rem 0;color:var(--inl);font-size:13px">No meetings logged yet.</div>';return;}
+  items.forEach(function(x){
+    var diff=diffD(td(),x.nd),over=diff<-3,due=diff>=-3&&diff<=3;
+    var cls=over?'nd-over':due?'nd-due':'nd-ok';
+    var lbl=over?Math.abs(diff)+'d overdue':due?'Due '+(diff===0?'today':diff>0?'in '+diff+'d':Math.abs(diff)+'d ago'):'Due '+fmtS(x.nd);
+    var row=document.createElement('div');row.className='log-row';
+    row.innerHTML='<div class="log-l"><div class="log-av" style="background:'+COLS[x.i%COLS.length]+'">'+ini(x.m.name)+'</div><div><div class="log-name">'+x.m.name+'</div><div class="log-meta">Last: '+fmtS(x.last)+'</div></div></div><span class="nd '+cls+'">'+lbl+'</span>';
+    area.appendChild(row);
+  });
+}
+
+calData=loadCal();
+buildLanding();
+</script>
+</body>
+</html>
